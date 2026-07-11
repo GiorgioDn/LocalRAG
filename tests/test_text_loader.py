@@ -71,7 +71,7 @@ def test_load_text_file_invalid_encoding(tmp_path):
     file_path = tmp_path / "bad_utf8.txt"
     # Write some bytes that are not valid UTF-8
     with open(file_path, "wb") as f:
-        f.write(b "\xff\xfe\xfd") 
+        f.write(b, "\xff\xfe\xfd")
 
     with pytest.raises(ValueError) as excinfo:
         load_text_file(str(file_path))
