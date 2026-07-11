@@ -95,11 +95,31 @@ def test_pdf_metadata_persistence():
         assert c.metadata["page"] == 1
 
 def test_stable_ids():
-    """Verify IDs remain stable across two equivalent calls."""
-    doc = LoadedDocument(text="stable content", metadata={"source": "s", "source_type": "t"})
-    chunks1 = chunk_documents([doc], chunk_size=10)
-    chunks2 = chunk_documents([doc], chunk_size=10)
-    
+    """Verify that IDs are stable and follow the naming convention."""
+    # Test text source without page
+    doc_text = LoadedDocument(
+        text="some content", 
+        metadata={"source": "guide.md", "source_type": "text"}
+    )
+    chunks = chunk_documents([doc_text])
+    assert chunks[0].id == "guide.md-pnone-c0"
+
+    # Test PDF source with page
+    doc_pdf = LoadedDocument(
+        text="some content", 
+        metadata={"source": "/path/to/manual.pdf", "source_type": "pdf", "page": 12}
+    )
+    chunks_pdf = chunk_documents([doc_pdf])
+    assert chunks_pdf[0].id == "manual.pdf-p12-c0"
+
+def test_id_determinism():
+    """Verify that repeated calls with identical input produce identical IDs."""
+    doc = LoadedDocument(
+        text="stable", 
+        metadata={"source": "data.md"}
+    )
+    chunks1 = chunk_documents([doc])
+    chunks2 = chunk_documents([doc])
     assert chunks1[0].id == chunks2[0].id
 
 def test_invalid_settings():

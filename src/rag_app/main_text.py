@@ -5,9 +5,12 @@ from typing import Optional
 
 # Importing from shared pipelines
 from src.rag_app.rag.pipeline import ingest_text_path, answer_question
+from src.rag_app.utils.logging_utils import configure_logging, get_logger
 
+logger = get_logger(__name__)
 
 def main() -> None:
+    configure_logging()
     parser = argparse.ArgumentParser(description="Simple CLI for text-based RAG operations.")
     parser.add_argument("path", type=str, help="Path to the input .txt file")
     parser.add_argument("--collection", type=str, default=None, help="Optional name for the collection")
@@ -19,6 +22,7 @@ def main() -> None:
     try:
         ingest_text_path(path=args.path, collection_name=args.collection)
     except Exception as e:
+        logger.exception("Error during ingestion of path: %s", args.path)
         print(f"Error during ingestion: {e}", file=sys.stderr)
         sys.exit(1)
 
@@ -34,10 +38,10 @@ def main() -> None:
             if hasattr(response, "sources") and response.sources:
                 print("\nSources:")
                 for idx, source in enumerate(response.sources, 1):
-                    # Assuming 'source' has an identifier or name attribute
                     name = getattr(source, 'name', str(source))
                     print(f"{idx}. {name}")
         except Exception as e:
+            logger.exception("Error during QA generation for question: %s", args.question)
             print(f"Error during QA generation: {e}", file=sys.stderr)
             sys.exit(1)
 

@@ -4,27 +4,16 @@ from typing import Union
 from rag_app.constants import METADATA_SOURCE, METADATA_SOURCE_TYPE, SOURCE_TYPE_TEXT, SUPPORTED_TEXT_EXTENSIONS
 from rag_app.ingestion.normalizer import normalize_text
 from rag_app.types import LoadedDocument
+from rag_app.utils.file_utils import require_existing_file, require_supported_extension
 
 def load_text_file(path: Union[str, Path]) -> list[LoadedDocument]:
     """
     Safely loads a text-based file, normalizes its content, and returns 
     a list containing one LoadedDocument.
     """
-    file_path = Path(path)
-
-    if not file_path.exists():
-        raise FileNotFoundError(f"The specified path does not exist: {file_path}")
-    
-    if file_path.is_dir():
-        raise IsADirectoryError(f"The path is a directory, not a file: {file_path}")
-
-    suffix = file_path.suffix.lower()
-    if suffix not in SUPPORTED_TEXT_EXTENSIONS:
-        supported = ", ".join(sorted(list(SUPPORTED_TEXT_EXTENSIONS)))
-        raise ValueError(
-            f"Unsupported file extension '{suffix}'. "
-            f"Supported extensions are: {supported}"
-        )
+    # Use new utilities for path validation
+    file_path = require_existing_file(path)
+    file_path = require_supported_extension(file_path, SUPPORTED_TEXT_EXTENSIONS)
 
     try:
         raw_text = file_path.read_text(encoding="utf-8")

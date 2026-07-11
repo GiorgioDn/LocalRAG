@@ -5,6 +5,7 @@ from dataclasses import replace
 from rag_app.constants import METADATA_CHUNK_INDEX
 from rag_app.types import DocumentChunk, LoadedDocument
 from rag_app.config import settings
+from rag_app.utils.id_utils import build_chunk_id
 
 def _make_chunk_id(
     source: str, 
@@ -14,7 +15,7 @@ def _make_chunk_id(
     text: str
 ) -> str:
     """
-    Generates a deterministic SHA-256 hash for a chunk.
+    DEPRECATED: Use build_chunk_id from rag_app.utils.id_utils instead.
     """
     # Use a stable representation for the fields to ensure reproducibility.
     # We include text and metadata info in the seed.
@@ -69,14 +70,11 @@ def chunk_documents(
                     metadata = base_metadata.copy()
                     metadata[METADATA_CHUNK_INDEX] = current_chunk_index
                     
+                    # Use the centralized ID builder
+                    chunk_id = build_chunk_id(metadata, current_chunk_index)
+                    
                     all_chunks.append(DocumentChunk(
-                        id=_make_chunk_id(
-                            source=base_metadata.get("source", ""),
-                            source_type=base_metadata.get("source_type", ""),
-                            page=base_metadata.get("page"),
-                            index=current_chunk_index,
-                            text=chunk_content
-                        ),
+                        id=chunk_id,
                         text=chunk_content,
                         metadata=metadata
                     ))
@@ -98,14 +96,11 @@ def chunk_documents(
                 metadata = base_metadata.copy()
                 metadata[METADATA_CHUNK_INDEX] = current_chunk_index
                 
+                # Use the centralized ID builder
+                chunk_id = build_chunk_id(metadata, current_chunk_index)
+
                 all_chunks.append(DocumentChunk(
-                    id=_make_chunk_id(
-                        source=base_metadata.get("source", ""),
-                        source_type=base_metadata.get("source_type", ""),
-                        page=base_metadata.get("page"),
-                        index=current_chunk_index,
-                        text=chunk_text
-                    ),
+                    id=chunk_id,
                     text=chunk_text,
                     metadata=metadata
                 ))
@@ -144,7 +139,6 @@ def chunk_documents(
 
         # Re-verify the loop to ensure we don't end up with duplicate indices if 
         # current_pos doesn't advance due to specific chunk_size/overlap combos.
-        # The calculation 'current_pos = best_split - overlap' handles this as long 
-        # as overlap < size.
+        # The calculation 'current_pos = best_split - overlap' handles this as long as overlap < size.
 
     return all_chunks

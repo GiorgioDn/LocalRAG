@@ -17,7 +17,7 @@ from rag_app.constants import (
     METADATA_PAGE,
 )
 from rag_app.types import LoadedDocument
-
+from rag_app.utils.file_utils import require_existing_file, require_supported_extension
 
 def load_pdf_file(path: Union[str, Path]) -> List[LoadedDocument]:
     """
@@ -40,20 +40,9 @@ def load_pdf_file(path: Union[str, Path]) -> List[LoadedDocument]:
                     PDF is corrupted/encrypted, or if the PDF contains 
                     no extractable text.
     """
-    path_obj = Path(path)
-
-    # Validation
-    if not path_obj.exists():
-        raise FileNotFoundError(f"The file at {path_obj} was not found.")
-    
-    if path_obj.is_dir():
-        raise IsADirectoryError(f"The path {path_obj} is a directory, not a file.")
-
-    if path_obj.suffix.lower() not in SUPPORTED_PDF_EXTENSIONS:
-        raise ValueError(
-            f"Unsupported file extension '{path_obj.suffix}'. "
-            f"Supported extensions: {SUPPORTED_PDF_EXTENSIONS}"
-        )
+    # Use new utilities for validation
+    path_obj = require_existing_file(path)
+    path_obj = require_supported_extension(path_obj, SUPPORTED_PDF_EXTENSIONS)
 
     documents: List[LoadedDocument] = []
 
