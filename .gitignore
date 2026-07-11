@@ -180,6 +180,8 @@ cython_debug/
 .cursorignore
 .cursorindexingignore
 
+.DS_Store
+
 storage/chroma
 .example
 #/data/pdf 
