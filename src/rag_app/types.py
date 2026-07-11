@@ -23,3 +23,11 @@ class RagAnswer:
     """Represents the final answer returned by the RAG pipeline, including source metadata."""
     answer: str
     sources: list[dict[str, Any]] = field(default_factory=list)
+
+
+@dataclass
+class LoadedDocument:
+    """Extracted document content before chunking."""
+
+    text: str
+    metadata: dict[str, Any] = field(default_factory=dict)
