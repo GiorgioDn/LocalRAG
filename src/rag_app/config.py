@@ -9,9 +9,9 @@ class Settings:
     This class defines the core configuration parameters of the system. 
     It is designed to be immutable and validates all inputs upon initialization.
     """
-    base_url: str
-    chat_model: str
-    embed_model: str
+    ollama_base_url: str
+    ollama_chat_model: str
+    ollama_embed_model: str
     chroma_persist_dir: str
     default_collection: str
     chunk_size: int
@@ -25,9 +25,9 @@ class Settings:
         """
         # Validate that mandatory string fields are not empty or just whitespace
         string_fields = {
-            "base_url": self.base_url,
-            "chat_model": self.chat_model,
-            "embed_model": self.embed_model,
+            "ollama_base_url": self.ollama_base_url,
+            "ollama_chat_model": self.ollama_chat_model,
+            "ollama_embed_model": self.ollama_embed_model,
             "chroma_persist_dir": self.chroma_persist_dir,
             "default_collection": self.default_collection,
         }
@@ -68,11 +68,10 @@ def _get_env_int(key: str, default: int) -> int:
 
 
 # Instantiate the settings object for use throughout the application.
-# Defaults are provided to ensure functionality when environment variables are not set.
 settings = Settings(
-    base_url=os.getenv("BASE_URL"),
-    chat_model=os.getenv("CHAT_MODEL"),
-    embed_model=os.getenv("EMBED_MODEL"),
+    ollama_base_url=os.getenv("OLLAMA_BASE_URL"),
+    ollama_chat_model=os.getenv("OLLAMA_CHAT_MODEL"),
+    ollama_embed_model=os.getenv("OLLAMA_EMBED_MODEL"),
     chroma_persist_dir=os.getenv("CHROMA_PERSIST_DIR"),
     default_collection=os.getenv("DEFAULT_COLLECTION"),
     chunk_size=_get_env_int("CHUNK_SIZE"),
