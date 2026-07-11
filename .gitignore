@@ -182,3 +182,6 @@ cython_debug/
 
 storage/chroma
 .example
+#/data/pdf 
+#/data/text
+/data
