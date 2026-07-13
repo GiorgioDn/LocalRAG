@@ -181,6 +181,7 @@ cython_debug/
 .cursorindexingignore
 
 .DS_Store
+.vscode/
 
 storage/chroma
 .example
