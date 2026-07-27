@@ -2,10 +2,10 @@ import hashlib
 from typing import List, Optional
 from dataclasses import replace
 
-from rag_app.constants import METADATA_CHUNK_INDEX
-from rag_app.types import DocumentChunk, LoadedDocument
-from rag_app.config import settings
-from rag_app.utils.id_utils import build_chunk_id
+from src.rag_app.constants import METADATA_CHUNK_INDEX
+from src.rag_app.types import DocumentChunk, LoadedDocument
+from src.rag_app.config import settings
+from src.rag_app.utils.id_utils import build_chunk_id
 
 def _make_chunk_id(
     source: str, 

@@ -74,7 +74,7 @@ settings = Settings(
     ollama_embed_model=os.getenv("OLLAMA_EMBED_MODEL"),
     chroma_persist_dir=os.getenv("CHROMA_PERSIST_DIR"),
     default_collection=os.getenv("DEFAULT_COLLECTION"),
-    chunk_size=_get_env_int("CHUNK_SIZE"),
-    chunk_overlap=_get_env_int("CHUNK_OVERLAP"),
-    top_k=_get_env_int("TOP_K"),
+    chunk_size=_get_env_int("CHUNK_SIZE", 800),
+    chunk_overlap=_get_env_int("CHUNK_OVERLAP", 120),
+    top_k=_get_env_int("TOP_K", 5),
 )

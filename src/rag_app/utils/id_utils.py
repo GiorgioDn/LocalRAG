@@ -3,9 +3,9 @@ import re
 from pathlib import Path
 from typing import Any, Mapping
 
-from rag_app.constants import METADATA_CHUNK_INDEX
-from rag_app.constants import METADATA_PAGE
-from rag_app.constants import METADATA_SOURCE
+from src.rag_app.constants import METADATA_CHUNK_INDEX
+from src.rag_app.constants import METADATA_PAGE
+from src.rag_app.constants import METADATA_SOURCE
 
 def build_chunk_id(
     metadata: Mapping[str, Any],

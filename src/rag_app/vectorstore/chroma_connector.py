@@ -2,8 +2,8 @@ import chromadb
 from pathlib import Path
 from typing import Any, Sequence
 
-from rag_app.config import settings
-from rag_app.types import DocumentChunk
+from src.rag_app.config import settings
+from src.rag_app.types import DocumentChunk
 
 class ChromaConnector:
     """

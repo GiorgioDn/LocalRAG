@@ -8,16 +8,16 @@ import fitz  # PyMuPDF
 from pathlib import Path
 from typing import Union, List
 
-from rag_app.ingestion.normalizer import normalize_text
-from rag_app.constants import (
+from src.rag_app.ingestion.normalizer import normalize_text
+from src.rag_app.constants import (
     SUPPORTED_PDF_EXTENSIONS,
     SOURCE_TYPE_PDF,
     METADATA_SOURCE,
     METADATA_SOURCE_TYPE,
     METADATA_PAGE,
 )
-from rag_app.types import LoadedDocument
-from rag_app.utils.file_utils import require_existing_file, require_supported_extension
+from src.rag_app.types import LoadedDocument
+from src.rag_app.utils.file_utils import require_existing_file, require_supported_extension
 
 def load_pdf_file(path: Union[str, Path]) -> List[LoadedDocument]:
     """

@@ -1,10 +1,10 @@
 from pathlib import Path
 from typing import Union
 
-from rag_app.constants import METADATA_SOURCE, METADATA_SOURCE_TYPE, SOURCE_TYPE_TEXT, SUPPORTED_TEXT_EXTENSIONS
-from rag_app.ingestion.normalizer import normalize_text
-from rag_app.types import LoadedDocument
-from rag_app.utils.file_utils import require_existing_file, require_supported_extension
+from src.rag_app.constants import METADATA_SOURCE, METADATA_SOURCE_TYPE, SOURCE_TYPE_TEXT, SUPPORTED_TEXT_EXTENSIONS
+from src.rag_app.ingestion.normalizer import normalize_text
+from src.rag_app.types import LoadedDocument
+from src.rag_app.utils.file_utils import require_existing_file, require_supported_extension
 
 def load_text_file(path: Union[str, Path]) -> list[LoadedDocument]:
     """

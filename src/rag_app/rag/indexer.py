@@ -1,10 +1,10 @@
 from typing import List, Optional
 
-from rag_app.config import settings
-from rag_app.ingestion.chunker import chunk_documents
-from rag_app.models.ollama_embeddings import OllamaEmbeddingClient
-from rag_app.types import DocumentChunk, LoadedDocument
-from rag_app.vectorstore.chroma_connector import ChromaConnector
+from src.rag_app.config import settings
+from src.rag_app.ingestion.chunker import chunk_documents
+from src.rag_app.models.ollama_embeddings import OllamaEmbeddingClient
+from src.rag_app.types import DocumentChunk, LoadedDocument
+from src.rag_app.vectorstore.chroma_connector import ChromaConnector
 
 class DocumentIndexer:
     """
