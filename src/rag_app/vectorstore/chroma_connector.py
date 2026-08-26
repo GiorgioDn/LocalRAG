@@ -23,8 +23,8 @@ class ChromaConnector:
             client: An optional pre-configured chromadb ClientAPI for injection (e.g., for testing).
         """
         if persist_directory is None:
-            persist_directory = settings.chroma_persist_dir
-
+            # Fallback to a default directory if the config is missing
+            persist_directory = "storage/chroma" 
         self.persist_directory = Path(persist_directory)
         self.persist_directory.mkdir(parents=True, exist_ok=True)
 

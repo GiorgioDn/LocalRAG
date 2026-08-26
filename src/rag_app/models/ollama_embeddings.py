@@ -51,22 +51,23 @@ class OllamaEmbeddingClient:
             if not text or text.isspace():
                 raise ValueError("Each input text must be a non-empty string.")
 
-        try:
-            response = self.client.embeddings(
-                model=self.model,
-                prompt=texts
-            )
-            embeddings = self._extract_embeddings(response)
-            
-            if len(embeddings) != len(texts):
-                raise RuntimeError(
-                    f"Expected {len(texts)} embeddings but received {len(embeddings)}."
+        embeddings = []
+        for text in texts:
+            try:
+                response = self.client.embeddings(
+                    model=self.model,
+                    prompt=text
                 )
-            
-            return embeddings
+                embeddings.append(self._extract_embeddings(response))
+            except Exception as e:
+                raise RuntimeError(f"Embedding failed for model '{self.model}'.") from e
 
-        except Exception as e:
-            raise RuntimeError(f"Embedding failed for model '{self.model}'.") from e
+        if len(embeddings) != len(texts):
+            raise RuntimeError(
+                f"Expected {len(texts)} embeddings but received {len(embeddings)}."
+            )
+        
+        return embeddings
 
     def embed_query(self, query: str) -> List[float]:
         """
@@ -88,29 +89,37 @@ class OllamaEmbeddingClient:
         embeddings = self.embed_texts([query])
         return embeddings[0]
 
-    def _extract_embeddings(self, response: object) -> List[List[float]]:
+    def _extract_embeddings(self, response: object) -> List[float]:
         """
         Helper method to extract embedding data from the Ollama response.
-        Ensures the result is a list of lists of floats regardless of SDK-specific types.
+        Ensures the result is a list of floats.
 
         Args:
-            response: The raw response from the ollama.Client.embeddings call.
+            response: The raw response from the Ollama.Client.embeddings call.
 
         Returns:
-            A nested list of floats.
+            A list of floats representing the embedding.
         """
-        # Ensure we handle the dictionary-like access typical in recent 'ollama' python libs
-        # or list-of-objects depending on specific internal implementation.
-        # Typically, response.embeddings is a list of objects where .embedding is a list of floats.
+        # Handle the different ways the 'ollama' library might return data
         if hasattr(response, "embeddings") and response.embeddings:
-            return [[e.embedding for e in response.embeddings] if hasattr(e, 'embedding') 
-                    else [e] for e in response.embeddings]
+            # If multiple were returned, take the first (relevant if iterating)
+            return list(map(float, response.embeddings[0]))
         
-        # Fallback/Alternative if the object is a dict or direct list of lists
+        if hasattr(response, "embedding") and response.embedding:
+            # Single embedding result (expected when prompt is a single string)
+            return list(map(float, response.embedding))
+
+        # Fallback for dictionary-like access
+        if isinstance(response, dict) and "embeddings" in response:
+            return list(map(float, response["embeddings"]))
+        
+        # Final fallback to direct cast
         try:
-            if isinstance(response, dict) and "embeddings" in response:
-                return [[float(x) for x in emb] for emb in response["embeddings"]]
-            return [list(map(float, emb)) for emb in response.embeddings]
-        except (AttributeError, TypeError):
-            # If we can't determine the type easily but it is iterable
-            return [list(map(float, emb)) for emb in response.embeddings]
+            return list(map(float, response))
+        except (TypeError, ValueError):
+            # If it fails, attempt to fall back to known properties
+            if hasattr(response, "embeddings") and response.embeddings:
+                return list(map(float, response.embeddings[0]))
+            if hasattr(response, "embedding") and response.embedding:
+                return list(map(float, response.embedding))
+            return []

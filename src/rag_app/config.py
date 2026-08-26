@@ -68,13 +68,19 @@ def _get_env_int(key: str, default: int) -> int:
 
 
 # Instantiate the settings object for use throughout the application.
+def get_default_embed_model():
+    model = os.getenv("OLLAMA_EMBED_MODEL")
+    return model if model and model.strip() != "" else "nomic-embed-text"
+
 settings = Settings(
     ollama_base_url=os.getenv("OLLAMA_BASE_URL"),
     ollama_chat_model=os.getenv("OLLAMA_CHAT_MODEL"),
-    ollama_embed_model=os.getenv("OLLAMA_EMBED_MODEL"),
+    ollama_embed_model=get_default_embed_model(),
     chroma_persist_dir=os.getenv("CHROMA_PERSIST_DIR"),
     default_collection=os.getenv("DEFAULT_COLLECTION"),
     chunk_size=_get_env_int("CHUNK_SIZE", 800),
     chunk_overlap=_get_env_int("CHUNK_OVERLAP", 120),
     top_k=_get_env_int("TOP_K", 5),
 )
+
+CHROMA_PATH = os.getenv("CHROMA_PATH", "storage/chroma")
