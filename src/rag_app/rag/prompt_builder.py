@@ -62,7 +62,7 @@ def build_rag_prompt(
         for i, chunk in enumerate(retrieved_chunks, start=1):
             source_info = format_source(chunk.metadata)
             prompt_parts.append(f"[Context {i} | {source_info}]")
-            prompt_parts.append(f"{chunk.content}")
+            prompt_parts.append(f"{chunk.text}")
             prompt_parts.append("")
 
     prompt_parts.append(f"Question:\n{question.strip()}")

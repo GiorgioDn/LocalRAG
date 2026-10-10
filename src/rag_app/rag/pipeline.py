@@ -33,7 +33,7 @@ def ingest_text_path(
     return list(chunks)
 
 def ingest_pdf_path(
-    path: str | Path,
+    pdf_path: str | Path,
     collection_name: str | None = None,
     *,
     indexer: DocumentIndexer | None = None,
@@ -44,7 +44,7 @@ def ingest_pdf_path(
     collection_name = collection_name or settings.default_collection
     
     # Load documents
-    loaded_documents = load_pdf_file(path)
+    loaded_documents = load_pdf_file(pdf_path)
     
     # Get indexer
     active_indexer = indexer or DocumentIndexer()

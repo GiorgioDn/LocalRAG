@@ -175,25 +175,33 @@ class ChromaConnector:
             include=["documents", "metadatas", "distances"],
         )
 
-        # Chroma returns a list of lists for each field. 
-        # We need to flatten the first result since we only passed one query embedding.
-        if not isinstance(response["documents"], list) or not response["documents"]:
+        # Chroma returns nested lists (one per query embedding). We passed one,
+        # so take the first inner list to get the top_k results.
+        def _flatten(response, key):
+            value = response[key]
+            if isinstance(value, list) and value and isinstance(value[0], list):
+                return value[0]
+            return value
+
+        documents = _flatten(response, "documents")
+        ids       = _flatten(response, "ids")
+        metadatas = _flatten(response, "metadatas")
+        distances = _flatten(response, "distances")
+
+        if not isinstance(documents, list) or not documents:
             return []
 
         results = []
-        for i in range(len(response["documents"])):
-            # Validate that metadata and distances exist at this index
-            if (i < len(response["metadatas"]) and 
-                i < len(response["distances"]) and 
-                response["documents"][i] is not None):
-                
+        for i in range(len(documents)):
+            if (i < len(metadatas) and i < len(distances) and
+                i < len(ids) and documents[i] is not None):
                 results.append({
-                    "id": response["ids"][i],
-                    "text": response["documents"][i],
-                    "metadata": dict(response["metadatas"][i]),
-                    "score": response["distances"][i],
+                    "id": ids[i],
+                    "text": documents[i],
+                    "metadata": metadatas[i],   # already a dict
+                    "score": distances[i],
                 })
-        
+
         return results
 
     def delete_collection(self, collection_name: str) -> None:

@@ -7,10 +7,11 @@ A local-first Retrieval-Augmented Generation (RAG) application that lets you ing
 ## Development
 
 
-| Phase          | Model       |
-| -------------- | ----------- |
-| Planning       | GPT 5.4     |
-| Implementation | Gemma 4:12b |
+| Phase          | Model          |
+| -------------- | -------------- |
+| Planning       | GPT 5.4        |
+| Implementation | Gemma 4:12b    |
+| Debugging      | Ornith 1.5:9b  |
 
 
 ## Description
