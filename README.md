@@ -7,7 +7,7 @@ A local-first Retrieval-Augmented Generation (RAG) application that lets you ing
 ## Development
 
 
-| Phase          | Model          |
+| Phase          | Model Used     |
 | -------------- | -------------- |
 | Planning       | GPT 5.4        |
 | Implementation | Gemma 4:12b    |
@@ -57,7 +57,7 @@ Clone the repository and install the dependencies:
 ```bash
 git clone <repository-url>
 cd LocalRAG
-pip install -r requirements-dev.txt
+pip install -r requirements.txt
 ```
 
 
