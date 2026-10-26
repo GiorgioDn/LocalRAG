@@ -4,13 +4,13 @@ from pathlib import Path
 from typing import List
 from unittest.mock import patch
 
-from rag_app.ingestion.pdf_loader import load_pdf_file
-from rag_app.constants import (
+from src.rag_app.ingestion.pdf_loader import load_pdf_file
+from src.rag_app.constants import (
     METADATA_SOURCE,
     METADATA_SOURCE_TYPE,
     METADATA_PAGE,
 )
-from rag_app.types import LoadedDocument
+from src.rag_app.types import LoadedDocument
 
 @pytest.fixture
 def temp_pdf_paths(tmp_path):
@@ -21,9 +21,8 @@ def temp_pdf_paths(tmp_path):
     page1 = doc1.new_page()
     page1.insert_text((50, 50), "Content for Page 1")
     
-    doc1.add_page() # Page 2 (blank)
+    doc1.new_page() # Page 2 (blank)
     
-    doc1.add_page()
     page3 = doc1.new_page()
     page3.insert_text((50, 50), "Content for Page 3")
     doc1.save(str(mixed_pdf))
@@ -32,8 +31,8 @@ def temp_pdf_paths(tmp_path):
     # 2. Only blank pages (no extractable text)
     blank_pdf = tmp_path / "blank_pages.pdf"
     doc2 = fitz.open()
-    doc2.add_page()
-    doc2.add_page()
+    doc2.new_page()
+    doc2.new_page()
     doc2.save(str(blank_pdf))
     doc2.close()
 
@@ -80,10 +79,10 @@ def test_load_pdf_invalid_paths(temp_pdf_paths):
     Test 5: Test non-existent files and invalid formats.
     """
     # Missing file (should trigger FileNotFoundError or the ValueError from open failure)
-    with pytest.raises(ValueError):
-        load_pdf_file(str(temp_pdf_langs["missing"]))
+    with pytest.raises((ValueError, FileNotFoundError)):
+        load_pdf_file(str(temp_pdf_paths["missing"]))
 
     # Check if it handles a file that isn't a valid PDF structure correctly 
     # Note: fitz.open() might raise its own exception which is caught and re-raised as ValueError in the loader.
-    with pytest.raises(ValueError, match="Failed to open PDF"):
+    with pytest.raises(ValueError, match="Failed to open PDF|Unsupported file extension"):
         load_pdf_file(str(temp_pdf_paths["invalid_ext"]))

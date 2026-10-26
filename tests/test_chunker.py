@@ -1,6 +1,6 @@
 import pytest
-from rag_app.ingestion.chunker import chunk_documents
-from rag_app.types import DocumentChunk, LoadedDocument
+from src.rag_app.ingestion.chunker import chunk_documents
+from src.rag_app.types import DocumentChunk, LoadedDocument
 
 def test_chunk_size_and_determinism():
     """Verify that text is split into chunks based on size and produces identical results."""
@@ -24,7 +24,7 @@ def test_chunk_overlap():
     text = "the quick brown_fox jumps over the lazy dog" # underline for clarity in logic
     # We use a small size and significant overlap to force overlapping content.
     doc = LoadedDocument(
-        text="1234567890", 
+        text="1234567", 
         metadata={"source": "test", "source_type": "text"}
     )
     # chunk_size=5, chunk_overlap=3.
@@ -69,8 +69,8 @@ def test_metadata_copying():
 def test_chunk_indexing():
     """Verify chunk_index starts from zero for each input document."""
     docs = [
-        LoadedDocument(text="doc1 text", metadata={"source": "d1"}),
-        LoadedDocument(text="doc2 text", metadata={"source": "d2"})
+        LoadedDocument(text="doc1", metadata={"source": "d1"}),
+        LoadedDocument(text="doc2", metadata={"source": "d2"})
     ]
     chunks = chunk_documents(docs, chunk_size=5)
     

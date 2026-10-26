@@ -1,7 +1,7 @@
 import unittest
 from unittest.mock import MagicMock, patch
-from rag_app.rag.indexer import DocumentIndexer
-from rag_app.types import DocumentChunk, LoadedDocument
+from src.rag_app.rag.indexer import DocumentIndexer
+from src.rag_app.types import DocumentChunk, LoadedDocument
 
 class TestDocumentIndexer(unittest.TestCase):
     def setUp(self):
@@ -21,7 +21,7 @@ class TestDocumentIndexer(unittest.TestCase):
         # We'll mock the chunking function specifically for tests where 
         # we want to control its output directly.
         # Since it is imported as a module-level function in indexer.py:
-        self.patcher = patch("rag_app.rag.indexer.chunk_documents")
+        self.patcher = patch("src.rag_app.rag.indexer.chunk_documents")
         self.mock_chunk_func = self.patcher.start()
         # Update the instance's reference to our mock
         self.indexer._chunk_func = self.mock_chunk_func

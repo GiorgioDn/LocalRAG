@@ -1,9 +1,9 @@
 import pytest
 from pathlib import Path
 from unittest.mock import patch
-from rag_app.ingestion.text_loader import load_text_file
-from rag_app.types import LoadedDocument
-from rag_app.constants import METADATA_SOURCE, METADATA_SOURCE_TYPE, SOURCE_TYPE_TEXT
+from src.rag_app.ingestion.text_loader import load_text_file
+from src.rag_app.types import LoadedDocument
+from src.rag_app.constants import METADATA_SOURCE, METADATA_SOURCE_TYPE, SOURCE_TYPE_TEXT
 
 def test_load_text_file_success(tmp_path):
     """Test that a .txt file loads successfully and returns one LoadedDocument."""
@@ -71,7 +71,7 @@ def test_load_text_file_invalid_encoding(tmp_path):
     file_path = tmp_path / "bad_utf8.txt"
     # Write some bytes that are not valid UTF-8
     with open(file_path, "wb") as f:
-        f.write(b, "\xff\xfe\xfd")
+        f.write(b"\xff\xfe\xfd")
 
     with pytest.raises(ValueError) as excinfo:
         load_text_file(str(file_path))

@@ -78,6 +78,7 @@ class TestPipeline(unittest.TestCase):
         mock_answer = RagAnswer(answer="The answer is here", sources=[{"source": "test"}])
 
         self.mock_retriever.retrieve.return_value = mock_retrieved_chunks
+        self.mock_generator.generate.return_value = mock_answer
         # We need to patch build_rag_prompt because it's a standalone function in the module
         with patch("src.rag_app.rag.pipeline.build_rag_prompt", return_value=mock_prompt):
             result = answer_question(

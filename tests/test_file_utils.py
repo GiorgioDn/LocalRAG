@@ -1,6 +1,6 @@
 import unittest
 from pathlib import Path
-from rag_app.utils.file_utils import (
+from src.rag_app.utils.file_utils import (
     as_file_path,
     require_existing_file,
     has_supported_extension,

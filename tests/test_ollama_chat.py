@@ -41,8 +41,14 @@ def test_answer_success(chat_client, mock_client):
     prompt = "Hello"
     response_text = "  Some\n\ncontent   "
     
-    # Override the default mock behavior for this specific test case
-    mock_client.chat = lambda model, messages, stream=False: MockOllamaResponse(response_text)
+    def custom_chat(model, messages, stream=False):
+        mock_client.chat_called += 1
+        mock_client.last_model = model
+        mock_client.last_messages = messages
+        mock_client.last_stream = stream
+        return MockOllamaResponse(response_text)
+
+    mock_client.chat = custom_chat
     
     result = chat_client.answer(prompt)
 

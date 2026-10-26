@@ -80,7 +80,7 @@ class DocumentIndexer:
         if len(embeddings) != len(chunks):
             raise RuntimeError(
                 f"Embeddings count ({len(embeddings)}) does not match "
-                f"chunk count ({len(chunks)})."
+                f"chunk count ({len(chunks)}) (mismatch)."
             )
 
         # 7. Upsert to the vector store

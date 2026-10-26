@@ -60,7 +60,12 @@ class OllamaChatClient:
 
     def _extract_answer(self, response: ollama.ChatResponse) -> str:
         """Extract and format the assistant's message from the raw Ollama response."""
-        if not response.message or not response.message.content:
+        message = getattr(response, "message", None)
+        content = getattr(message, "content", None) if message else None
+        if not message or content is None:
             raise RuntimeError("Ollama returned an empty response.")
         
-        return response.message.content.strip()
+        if not isinstance(content, str) or not content.strip():
+            raise RuntimeError("Ollama returned an empty response.")
+        
+        return content.strip()

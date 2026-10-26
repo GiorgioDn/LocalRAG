@@ -1,6 +1,12 @@
 import os
 from dataclasses import dataclass
 
+try:
+    from dotenv import load_dotenv
+    load_dotenv()
+except ImportError:
+    pass
+
 @dataclass(frozen=True)
 class Settings:
     """
@@ -32,7 +38,7 @@ class Settings:
             "default_collection": self.default_collection,
         }
         for name, value in string_fields.items():
-            if not str(value).strip():
+            if value is None or not str(value).strip():
                 raise ValueError(f"Configuration '{name}' must not be empty after stripping whitespace.")
 
         # Validate numeric constraints
@@ -49,6 +55,16 @@ class Settings:
 
         if self.top_k <= 0:
             raise ValueError(f"top_k must be greater than 0 (received {self.top_k}).")
+
+
+def _get_env_str(key: str, default: str | None = None) -> str | None:
+    """
+    Internal helper to fetch environment variables with fallback default.
+    """
+    value = os.getenv(key)
+    if value is None or value.strip() == "":
+        return default
+    return value.strip()
 
 
 def _get_env_int(key: str, default: int) -> int:
@@ -68,16 +84,15 @@ def _get_env_int(key: str, default: int) -> int:
 
 
 # Instantiate the settings object for use throughout the application.
-def get_default_embed_model():
-    model = os.getenv("OLLAMA_EMBED_MODEL")
-    return model if model and model.strip() != "" else "nomic-embed-text"
+def get_default_embed_model() -> str:
+    return _get_env_str("OLLAMA_EMBED_MODEL", "nomic-embed-text")
 
 settings = Settings(
-    ollama_base_url=os.getenv("OLLAMA_BASE_URL"),
-    ollama_chat_model=os.getenv("OLLAMA_CHAT_MODEL"),
+    ollama_base_url=_get_env_str("OLLAMA_BASE_URL", "http://localhost:11434"),
+    ollama_chat_model=_get_env_str("OLLAMA_CHAT_MODEL", "llama3.2"),
     ollama_embed_model=get_default_embed_model(),
-    chroma_persist_dir=os.getenv("CHROMA_PERSIST_DIR"),
-    default_collection=os.getenv("DEFAULT_COLLECTION"),
+    chroma_persist_dir=_get_env_str("CHROMA_PERSIST_DIR", "storage/chroma"),
+    default_collection=_get_env_str("DEFAULT_COLLECTION", "documents"),
     chunk_size=_get_env_int("CHUNK_SIZE", 800),
     chunk_overlap=_get_env_int("CHUNK_OVERLAP", 120),
     top_k=_get_env_int("TOP_K", 5),

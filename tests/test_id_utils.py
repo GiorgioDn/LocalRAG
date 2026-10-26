@@ -1,7 +1,7 @@
 # tests/test_id_utils.py contents:
 import pytest
 from typing import Any, Mapping
-from rag_app.utils.id_utils import build_chunk_id
+from src.rag_app.utils.id_utils import build_chunk_id
 
 def test_build_chunk_id_basic():
     """Test standard cases for text and PDF sources."""

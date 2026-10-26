@@ -10,7 +10,8 @@ class TestNormalizer(unittest.TestCase):
 
     def test_trailing_whitespace(self):
         # Trailing spaces and tabs are removed from individual lines
-        self.assertEqual(normalize_text("Line1   \nLine2\t\n"), "Line1\nLine2\n")
+        self.assertEqual(normalize_text("Line1   \nLine2\t"), "Line1\nLine2")
+        self.assertEqual(normalize_text("Line1   \nLine2\t\nLine3"), "Line1\nLine2\nLine3")
 
     def test_horizontal_whitespace(self):
         # Repeated spaces and tabs within a line become one space

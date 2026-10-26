@@ -18,6 +18,7 @@ def main() -> None:
     parser.add_argument("pdf_path", type=str, help="Path to the PDF file for ingestion.")
     parser.add_argument("--collection", type=str, default="default_collection", help="Name of the vector store collection.")
     parser.add_argument("--question", type=str, help="The question or prompt to ask the RAG system.")
+    parser.add_argument("--model", type=str, default=None, help="Optional Ollama chat model to use for answer generation.")
 
     args = parser.parse_args()
 
@@ -35,18 +36,32 @@ def main() -> None:
     # 2. Q&A Phase (only if a question is provided via CLI)
     if args.question:
         try:
-            result = answer_question(
-                question=args.question,
-                collection_name=args.collection
-            )
+            generator = None
+            if getattr(args, "model", None):
+                from src.rag_app.rag.generator import RagGenerator
+                from src.rag_app.models.ollama_chat import OllamaChatClient
+                generator = RagGenerator(chat_client=OllamaChatClient(model=args.model))
+
+            kwargs = {"question": args.question, "collection_name": args.collection}
+            if generator is not None:
+                kwargs["generator"] = generator
+
+            result = answer_question(**kwargs)
             
             # Output the result and sources if available
-            print(f"\nAnswer:\n{result['answer']}")
+            answer_text = result["answer"] if isinstance(result, dict) or hasattr(result, "__getitem__") else result.answer
+            print(f"\nAnswer:\n{answer_text}")
             
-            if "sources" in result and result["sources"]:
+            sources = result.get("sources", []) if hasattr(result, "get") else getattr(result, "sources", [])
+            if sources:
                 print("\nSources:")
-                for idx, source in enumerate(result["sources"], 1):
-                    source_info = source.get("metadata", {}).get("source", "Unknown Source")
+                for idx, source in enumerate(sources, 1):
+                    if isinstance(source, dict):
+                        source_path = source.get("source") or source.get("metadata", {}).get("source", "Unknown Source")
+                        page = source.get("page") if "page" in source else source.get("metadata", {}).get("page")
+                        source_info = f"{source_path} (page {page})" if page is not None else str(source_path)
+                    else:
+                        source_info = str(source)
                     print(f"{idx}. {source_info}")
         except Exception as e:
             logger.exception("Failed to generate answer for question: %s", args.question)

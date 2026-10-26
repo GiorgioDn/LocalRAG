@@ -35,15 +35,11 @@ def has_supported_extension(
     if not suffix:
         return False
 
-    # Check if the extension is in the collection exactly or without the leading dot
-    if suffix in supported_extensions:
-        return True
-    
-    stripped_suffix = suffix.lstrip('.')
-    if stripped_suffix and stripped_suffix in supported_extensions:
-        return True
-
-    return False
+    normalized_supported = {
+        ext.lower() if ext.startswith(".") else f".{ext.lower()}"
+        for ext in supported_extensions
+    }
+    return suffix in normalized_supported
 
 def require_supported_extension(
     file_path: str | Path,

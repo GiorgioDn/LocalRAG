@@ -33,18 +33,23 @@ def ingest_text_path(
     return list(chunks)
 
 def ingest_pdf_path(
-    pdf_path: str | Path,
+    pdf_path: str | Path | None = None,
     collection_name: str | None = None,
     *,
     indexer: DocumentIndexer | None = None,
+    path: str | Path | None = None,
 ) -> list[DocumentChunk]:
     """
     Ingests a PDF file into the specified (or default) collection.
     """
+    actual_path = pdf_path if pdf_path is not None else path
+    if actual_path is None:
+        raise ValueError("pdf_path must be provided.")
+
     collection_name = collection_name or settings.default_collection
     
     # Load documents
-    loaded_documents = load_pdf_file(pdf_path)
+    loaded_documents = load_pdf_file(actual_path)
     
     # Get indexer
     active_indexer = indexer or DocumentIndexer()

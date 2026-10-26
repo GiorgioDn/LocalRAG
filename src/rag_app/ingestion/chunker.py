@@ -34,7 +34,12 @@ def chunk_documents(
     """
     # Determine configuration
     size = chunk_size if chunk_size is not None else settings.chunk_size
-    overlap = chunk_overlap if chunk_overlap is not None else settings.chunk_overlap
+    if chunk_overlap is not None:
+        overlap = chunk_overlap
+    elif chunk_size is not None and size <= settings.chunk_overlap:
+        overlap = 0
+    else:
+        overlap = settings.chunk_overlap
 
     # Validate configurations
     if size is None or size <= 0:
